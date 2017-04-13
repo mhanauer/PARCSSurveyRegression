@@ -15,25 +15,43 @@ rbbcsc = read.csv("RBBCSCStaffSurvey.csv", header = TRUE)
 Next we grab the variables of interest which are the SEL variables from each of them
 Only have 1st through 12th for years worked, because we forgot to add K for MCCSC
 ```{r}
-mccsc1 = mccsc[c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q36", "Q38",	"Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1", "Q44")]
+mccsc1 = mccsc[c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q36", "Q38", "Q44",	"Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1")]
 mccsc2 = mccsc1[-c(1:2), ]
 
-rbbcsc1 = rbbcsc[c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q10", "Q12", "Q14_2_1", "Q14_3_1", "Q14_4_1", "Q14_5_1", "Q14_6_1", "Q14_7_1", "Q14_8_1", "Q14_9_1", "Q14_10_1", "Q14_11_1", "Q14_12_1", "Q14_13_1", "Q15")]
+rbbcsc1 = rbbcsc[c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q10", "Q12", "Q15", "Q14_2_1", "Q14_3_1", "Q14_4_1", "Q14_5_1", "Q14_6_1", "Q14_7_1", "Q14_8_1", "Q14_9_1", "Q14_10_1", "Q14_11_1", "Q14_12_1", "Q14_13_1")]
 
 rbbcsc2 = rbbcsc1[-c(1:2), ]
 
-names(rbbcsc2) = c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q36", "Q38",	"Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1", "Q44")
+names(rbbcsc2) = c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q36", "Q38", "Q44",	"Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1")
 
 
 both = rbind(mccsc2, rbbcsc2)
 
+```
+Need to get the blanks for the years variable changed from blanks to zero's.  And then we need to bring the variables both into the same dataset with both
+```{r}
+both1 = both[c("Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1")]
+write.csv(both1, "both1.csv")
+both1 = read.csv("both1.csv", header = TRUE, , na.strings = c(""))
+both1[is.na(both1)] = 0; both1
+# Create a seperate dataset with the other non years variables so we don't duplicate them when combining them
+both2 = both[c("Q1_1", "Q1_2", "Q1_3", "Q1_4", "Q1_5", "Q1_6", "Q36", "Q38", "Q44")]
+# Want both two first to perserve the order from the original data
+both = cbind(both2, both1)
+
+```
+
+
+Then we need to get rid of the missing values
+```{r}
 write.csv(both, "both.csv")
 both1 = read.csv("both.csv", header = TRUE, , na.strings = c(""))
-
 both2 = na.omit(both1)
-
-# Need to create both2, because we need this data set to create the scores for the factor analysis later
 ```
+
+
+
+
 Try to change the variable into factor without the apply function for ones that have no inherent order.
 
 Need to create a variable for master's degree or higher.  Therefore, we need to identitfy what numerical factors will be associated with a master's degree or higher when we convert the data into a numerical structure.
@@ -102,10 +120,10 @@ Q15Years = as.data.frame(Q15Years)
 Q15Years = apply(Q15Years, 2, function(x){ifelse(x == "~1", 0, x)})
 Q15Years = as.data.frame(Q15Years)
 
-write.csv(Q15Years, "Q15Years.csv")
 Q15Years = read.csv("Q15Years.csv", header = TRUE)
 # Remember when you read back in a csv file there is an extra variable included that you nee to get rid of.
 Q15Years = Q15Years[c("Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1")]
+Q15Years = as.data.frame(Q15Years)
 Q15Years2 = apply(Q15Years, 1, mean); head(Q15Years2)
 
 ```
@@ -150,8 +168,6 @@ both3$Q36Invar = Q36Invar
 cfaSEL = 'Satisfaction = ~ Q1_1 + Q1_2 + Q1_3 + Q1_4'
 cfaSEL2 = cfa(cfaSEL, estimator = "MLR", data = both3)
 summary(cfaSEL2, fit.measures = TRUE)
-library(semTools)
-#measurementInvariance(cfaSEL2, data = both3, group = "Q36Invar")
 SELSatis = lavPredict(cfaSEL2, type = "lv")
 ```
 Now we need to combine the dataset with the altered variables into a new dataset ready for regression.  There is something werid with the names, but the data is the same.
