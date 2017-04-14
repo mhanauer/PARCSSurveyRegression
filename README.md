@@ -168,8 +168,12 @@ SELSatis = lavPredict(cfaSEL2, type = "lv")
 Now we need to combine the dataset with the altered variables into a new dataset ready for regression.  There is something werid with the names, but the data is the same.
 ```{r}
 selRegress = cbind(Q36Factor, Q44FactorSecon, Q15Years2, SELSatis)
-setwd("~/Desktop/DBDA2Eprograms")
+names(selRegress) = c("Men", "Secondary", "Experience", "SELSVScore")
+head(selRegress)
+setwd("~/Desktop/QualData")
 write.csv(selRegress, "selRegress.csv")
+
+
 ```
 Now we use Kruscke's High Level Script for robust multivariate regression to conduct the analysis
 ```{r}
@@ -182,7 +186,7 @@ rm(list=ls())  # Careful! This clears all of R's memory!
 #.............................................................................
 setwd("~/Desktop/QualData")
 myData = read.csv( file="selRegress.csv" )
-yName = "Satisfaction" ; xName = c("Q36Factor", "Q44Factor", "Q15Years2")
+yName = "SELSVScore" ; xName = c("Men", "Secondary", "Experience")
 fileNameRoot = "SELSatis-" 
 numSavedSteps=15000 ; thinSteps=5
 #.............................................................................
