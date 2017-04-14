@@ -130,7 +130,7 @@ write.csv(Q15Years, "Q15Years.csv")
 Q15Years = read.csv("Q15Years.csv", header = TRUE)
 Q15Years = Q15Years[c("Q15_2_1",	"Q15_3_1",	"Q15_4_1",	"Q15_5_1",	"Q15_6_1",	"Q15_7_1",	"Q15_8_1",	"Q15_9_1",	"Q15_10_1",	"Q15_11_1",	"Q15_12_1",	"Q15_13_1")]
 
-Q15Years2 = apply(Q15Years, 1, mean); head(Q15Years2)
+Q15Years2 = apply(Q15Years, 1, sum); head(Q15Years2)
 
 ```
 
