@@ -159,6 +159,7 @@ write.csv(both2, "both2.csv")
 CFA: Need to get the factor scores for using in regression. 
 ```{r}
 library(lavaan)
+setwd("~/Desktop/QualData")
 both2 = read.csv("both2.csv", header = TRUE)
 cfaSEL = 'Satisfaction = ~ Q1_1 + Q1_2 + Q1_3 + Q1_4'
 cfaSEL2 = cfa(cfaSEL, estimator = "MLR", data = both2)
